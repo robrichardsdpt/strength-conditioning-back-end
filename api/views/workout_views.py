@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user, authenticate, login, logout
 from django.middleware.csrf import get_token
 
-from ..models.Workout import Workout
+from ..models.workout import Workout
 from ..serializers import WorkoutSerializer, UserSerializer
 
 # Create your views here.

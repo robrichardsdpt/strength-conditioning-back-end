@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models.mango import Mango
+from .models.workout import Workout
+from .models.exercise import Exercise
 from .models.user import User
 
 class WorkoutSerializer(serializers.ModelSerializer):
