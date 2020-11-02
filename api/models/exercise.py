@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 class Exercise(models.Model):
   # define fields
   # https://docs.djangoproject.com/en/3.0/ref/models/fields/
-  name = models.CharField(max_length=100)
+  name = models.CharField(max_length=100, default='no name given')
   sets = models.IntegerField(
         default=0,
         validators=[
@@ -34,7 +34,7 @@ class Exercise(models.Model):
         validators = [
           MinValueValidator(0)
         ])
-  notes = models.CharField(max_length=200)
+  notes = models.CharField(max_length=200, blank=True)
   owner = models.ForeignKey(
       get_user_model(),
       on_delete=models.CASCADE

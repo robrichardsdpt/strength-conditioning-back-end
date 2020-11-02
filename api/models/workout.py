@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 class Workout(models.Model):
   # define fields
   # https://docs.djangoproject.com/en/3.0/ref/models/fields/
-  rx_date = models.CharField(max_length=100)
+  rx_date = models.CharField(max_length=100, default='no rx date')
   overall_rpe = models.IntegerField(
         default = 0,
         blank=True,
@@ -13,7 +13,7 @@ class Workout(models.Model):
         MinValueValidator(0),
         MaxValueValidator(10)
         ])
-  notes = models.CharField(max_length=200)
+  notes = models.CharField(max_length=200, blank=True)
   owner = models.ForeignKey(
       get_user_model(),
       on_delete=models.CASCADE
