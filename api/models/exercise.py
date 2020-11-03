@@ -52,10 +52,10 @@ class Exercise(models.Model):
     return {
         'id': self.id,
         'name': self.name,
-        'notes': self.notes,
         'sets': self.sets,
         'repetitions': self.exercise,
         'rx_percentage': self.rx_percentage,
         'rx_rpe': self.rx_rpe,
-        'weight': self.weight
+        'weight': self.weight,
+        'notes': self.notes
     }
