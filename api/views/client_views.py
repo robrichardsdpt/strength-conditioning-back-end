@@ -6,8 +6,8 @@ from rest_framework import status, generics
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user, authenticate, login, logout
 
-from ..serializers import UserSerializer, UserRegisterSerializer,  ChangePasswordSerializer
-from ..models.user import User
+from ..serializers import ClientSerializer, ClientRegisterSerializer,  ChangePasswordSerializer
+from ..models.client import Client
 
 class SignUp(generics.CreateAPIView):
     # Override the authentication/permissions classes so this endpoint

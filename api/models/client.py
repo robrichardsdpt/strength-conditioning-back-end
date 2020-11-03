@@ -3,8 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 from django.conf import settings
 from rest_framework.authtoken.models import Token
 
-class UserManager(BaseUserManager):
-    """Manager for user profiles"""
+class ClientManager(BaseUserManager):
+    """Manager for client user profiles"""
 
     # The create_user method is passed:
     # self:      All methods in Python receive the class as the first argument
@@ -14,11 +14,11 @@ class UserManager(BaseUserManager):
     #            This ensures the proper error is thrown if a password is
     #            not provided.
     # **extra_fields:  Just in case there are extra arguments passed.
-    def create_user(self, email, password=None, **extra_fields):
-        """Create a new user profile"""
+    def create_client_user(self, email, password=None, **extra_fields):
+        """Create a new client user profile"""
         # Add a custom validation error
         if not email:
-            raise ValueError('User must have an email address')
+            raise ValueError('Client user must have an email address')
 
         # Create a user from the UserModel
         # Use the normalize_email method from the BaseUserManager to
@@ -45,8 +45,8 @@ class UserManager(BaseUserManager):
 
         # Add the required is_superuser and is_staff properties
         # which must be set to True for superusers
-        user.is_superuser = True
-        user.is_staff = True
+        user.is_superuser = False
+        user.is_staff = False
         # Save the user to the database with the new properties
         user.save()
 
@@ -54,13 +54,12 @@ class UserManager(BaseUserManager):
         return user
 
 # Inherit from AbstractBaseUser and PermissionsMixin:
-class User(AbstractBaseUser, PermissionsMixin):
+class Client(AbstractBaseUser, PermissionsMixin):
     """Database model for users"""
     # As with any Django models, we need to define the fields
     # for the model with the type and options:
     email = models.EmailField(max_length=255, unique=True)
-    name = models.CharField(max_length=250, default= '')
-    # name = models.CharField(max_length=255)
+    name = models.CharField(max_length=250, default='')
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
@@ -79,7 +78,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     # Standard Python: We'll create a string representation so when
     # the class is output we'll get something meaningful.
     def __str__(self):
-        """Return string representation of the user"""
+        """Return string representation of the client user"""
         return self.email
 
     def get_auth_token(self):

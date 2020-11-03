@@ -5,7 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class Workout(models.Model):
   # define fields
   # https://docs.djangoproject.com/en/3.0/ref/models/fields/
-  client = models.CharField(max_length=100, default='no client attached')
+  client = models.CharField(max_length=250, default='no client attached')
   rx_date = models.CharField(max_length=100, default='no rx date')
   overall_rpe = models.IntegerField(
         default = 0,
