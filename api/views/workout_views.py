@@ -19,9 +19,9 @@ class Workouts(generics.ListCreateAPIView):
         # Get all the workouts:
         # workouts = Workout.objects.all()
         # Filter the workouts by owner, so you can only see your owned workouts
-        mangos = Workout.objects.filter(owner=request.user.id)
+        workouts = Workout.objects.filter(owner=request.user.id)
         # Run the data through the serializer
-        data = WorkoutSerializer(mangos, many=True).data
+        data = WorkoutSerializer(workouts, many=True).data
         return Response({ 'workouts': data })
 
     def post(self, request):

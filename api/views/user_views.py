@@ -9,6 +9,34 @@ from django.contrib.auth import get_user, authenticate, login, logout
 from ..serializers import UserSerializer, UserRegisterSerializer,  ChangePasswordSerializer
 from ..models.user import User
 
+
+class Coaches(generics.ListCreateAPIView):
+    permission_classes=(IsAuthenticated,)
+    serializer_class = UserSerializer
+    def get(self, request):
+        """Index request"""
+        # Get all the workouts:
+        users = User.objects.all()
+        # Filter the workouts by owner, so you can only see your owned workouts
+        # Run the data through the serializer
+        data = UserSerializer(users, many=True).data
+        return Response({ 'users': data })
+
+class CoachDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes=(IsAuthenticated,)
+    def get(self, request, pk):
+        """Show request"""
+        # Locate the workout to show
+        coach = get_object_or_404(Coach, pk=pk)
+        # Only want to show owned workouts?
+        if not request.user.id == coach.owner.id:
+            raise PermissionDenied('Unauthorized, you do not own this user')
+
+        # Run the data through the serializer so it's formatted
+        data = UserSerializer(coach).data
+        return Response({ 'user': data })
+
+
 class SignUp(generics.CreateAPIView):
     # Override the authentication/permissions classes so this endpoint
     # is not authenticated & we don't need any permissions to access it.
