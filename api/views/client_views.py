@@ -1,27 +1,44 @@
-# from rest_framework.views import APIView
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import PermissionDenied
-from rest_framework import status, generics
+from rest_framework import generics, status
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user, authenticate, login, logout
+from django.middleware.csrf import get_token
 
-from ..serializers import UserSerializer, UserRegisterSerializer,  ChangePasswordSerializer
 from ..models.client import Client
+from ..serializers import ClientSerializer, UserSerializer
 
+# Create your views here.
 class Clients(generics.ListCreateAPIView):
     permission_classes=(IsAuthenticated,)
-    serializer_class = UserSerializer
+    serializer_class = ClientSerializer
     def get(self, request):
         """Index request"""
         # Get all the workouts:
-        clients = Client.objects.all()
+        # workouts = Workout.objects.all()
         # Filter the workouts by owner, so you can only see your owned workouts
+        clients = Client.objects.filter(owner=request.user.id)
         # Run the data through the serializer
-        data = UserSerializer(clients, many=True).data
+        data = ClientManageSerializer(clients, many=True).data
         return Response({ 'clients': data })
 
-class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
+    def post(self, request):
+        """Create request"""
+        # Add user to request data object
+        request.data['client']['owner'] = request.user.id
+        # Serialize/create mango
+        client = ClientSerializer(data=request.data['client'])
+        # If the workout data is valid according to our serializer...
+        if client.is_valid():
+            # Save the created workout & send a response
+            client.save()
+            return Response({ 'client': client.data }, status=status.HTTP_201_CREATED)
+        # If the data is not valid, return a response with the errors
+        return Response(client.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class Client_Detail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes=(IsAuthenticated,)
     def get(self, request, pk):
         """Show request"""
@@ -29,99 +46,46 @@ class ClientDetail(generics.RetrieveUpdateDestroyAPIView):
         client = get_object_or_404(Client, pk=pk)
         # Only want to show owned workouts?
         if not request.user.id == client.owner.id:
-            raise PermissionDenied('Unauthorized, you do not own this user')
+            raise PermissionDenied('Unauthorized, you do not work with this client')
 
         # Run the data through the serializer so it's formatted
-        data = UserSerializer(client).data
-        return Response({ 'user': data })
+        data = ClientSerializer(client).data
+        return Response({ 'client': data })
 
-class ClientSignUp(generics.CreateAPIView):
-    # Override the authentication/permissions classes so this endpoint
-    # is not authenticated & we don't need any permissions to access it.
-    authentication_classes = ()
-    permission_classes = ()
-
-    # Serializer classes are required for endpoints that create data
-    serializer_class = UserRegisterSerializer
-
-    def post(self, request):
-        # Pass the request data to the serializer to validate it
-        user = UserRegisterSerializer(data=request.data['credentials'])
-        # If that data is in the correct format...
-        if user.is_valid():
-            # Actually create the user using the UserSerializer (the `create` method defined there)
-            created_user = UserSerializer(data=user.data)
-
-            if created_user.is_valid():
-                # Save the user and send back a response!
-                created_user.save()
-                return Response({ 'user': created_user.data }, status=status.HTTP_201_CREATED)
-            else:
-                return Response(created_user.errors, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
-
-class ClientSignIn(generics.CreateAPIView):
-    # Override the authentication/permissions classes so this endpoint
-    # is not authenticated & we don't need any permissions to access it.
-    authentication_classes = ()
-    permission_classes = ()
-
-    # Serializer classes are required for endpoints that create data
-    serializer_class = UserSerializer
-
-    def post(self, request):
-        creds = request.data['credentials']
-        print(creds)
-        # We can pass our email and password along with the request to the
-        # `authenticate` method. If we had used the default user, we would need
-        # to send the `username` instead of `email`.
-        user = authenticate(request, email=creds['email'], password=creds['password'])
-        # Is our user is successfully authenticated...
-        if user is not None:
-            # And they're active...
-            if user.is_active:
-                # Log them in!
-                login(request, user)
-                # Finally, return a response with the user's token
-                return Response({
-                    'user': {
-                        'id': user.id,
-                        'name': user.name,
-                        'email': user.email,
-                        'is_staff': user.is_staff,
-                        'token': user.get_auth_token()
-                    }
-                })
-            else:
-                return Response({ 'msg': 'The account is inactive.' }, status=status.HTTP_400_BAD_REQUEST)
-        else:
-            return Response({ 'msg': 'The username and/or password is incorrect.' }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
-
-class SignOut(generics.DestroyAPIView):
-    def delete(self, request):
-        # Remove this token from the user
-        request.user.delete_token()
-        # Logout will remove all session data
-        logout(request)
+    def delete(self, request, pk):
+        """Delete request"""
+        # Locate workout to delete
+        client = get_object_or_404(Client, pk=pk)
+        # Check the workout's owner agains the user making this request
+        if not request.user.id == client.owner.id:
+            raise PermissionDenied('Unauthorized, you do not work with this client')
+        # Only delete if the user owns the  workout
+        client.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-class ChangePassword(generics.UpdateAPIView):
-    def partial_update(self, request):
-        user = request.user
-        # Pass data through serializer
-        serializer = ChangePasswordSerializer(data=request.data['passwords'])
-        if serializer.is_valid():
-            # This is included with the Django base user model
-            # https://docs.djangoproject.com/en/3.1/ref/contrib/auth/#django.contrib.auth.models.User.check_password
-            if not user.check_password(serializer.data['old']):
-                return Response({ 'msg': 'Wrong password' }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+    def partial_update(self, request, pk):
+        """Update Request"""
+        # Remove owner from request object
+        # This "gets" the owner key on the data['workout'] dictionary
+        # and returns False if it doesn't find it. So, if it's found we
+        # remove it.
+        if request.data['client'].get('owner', False):
+            del request.data['client']['owner']
 
-            # set_password will also hash the password
-            # https://docs.djangoproject.com/en/3.1/ref/contrib/auth/#django.contrib.auth.models.User.set_password
-            user.set_password(serializer.data['new'])
-            user.save()
+        # Locate Workout
+        # get_object_or_404 returns a object representation of our Workout
+        client = get_object_or_404(Client, pk=pk)
+        # Check if user is the same as the request.user.id
+        if not request.user.id == client.owner.id:
+            raise PermissionDenied('Unauthorized, you do not work with this client')
 
+        # Add owner to data object now that we know this user owns the resource
+        request.data['client']['owner'] = request.user.id
+        # Validate updates with serializer
+        data = ClientSerializer(client_manage, data=request.data['client'])
+        if data.is_valid():
+            # Save & send a 204 no content
+            data.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # If the data is not valid, return a response with the errors
+        return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)

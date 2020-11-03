@@ -6,20 +6,20 @@ from rest_framework import status, generics
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user, authenticate, login, logout
 
-from ..serializers import UserSerializer, UserRegisterSerializer,  ChangePasswordSerializer
+from ..serializers import UserSerializer, UserRegisterSerializer, CoachViewSerializer, ChangePasswordSerializer
 from ..models.user import User
 
 
 class Coaches(generics.ListCreateAPIView):
     permission_classes=(IsAuthenticated,)
-    serializer_class = UserSerializer
+    serializer_class = CoachViewSerializer
     def get(self, request):
         """Index request"""
-        # Get all the workouts:
+        # Get all the coaches:
         users = User.objects.all()
         # Filter the workouts by owner, so you can only see your owned workouts
         # Run the data through the serializer
-        data = UserSerializer(users, many=True).data
+        data = CoachViewSerializer(users, many=True).data
         return Response({ 'users': data })
 
 class CoachDetail(generics.RetrieveUpdateDestroyAPIView):

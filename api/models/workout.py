@@ -5,7 +5,6 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class Workout(models.Model):
   # define fields
   # https://docs.djangoproject.com/en/3.0/ref/models/fields/
-  client = models.CharField(max_length=250, default='no client attached')
   rx_date = models.CharField(max_length=100, default='no rx date')
   overall_rpe = models.IntegerField(
         default = 0,
@@ -15,10 +14,17 @@ class Workout(models.Model):
         MaxValueValidator(10)
         ])
   notes = models.CharField(max_length=200, blank=True)
+#  client = models.ForeignKey(
+#      'Client',
+#      related_name='workouts',
+#      on_delete=models.CASCADE,
+#      default= ''
+#  )
   owner = models.ForeignKey(
       get_user_model(),
       on_delete=models.CASCADE
   )
+
 
   def __str__(self):
     # This must return a string
@@ -28,7 +34,6 @@ class Workout(models.Model):
     """Returns dictionary version of Workout models"""
     return {
         'id': self.id,
-        'client': self.client,
         'rx_date': self.date,
         'notes': self.notes,
         'exercise': self.exercise,
