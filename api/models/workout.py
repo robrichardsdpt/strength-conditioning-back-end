@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
+from .client import Client
 # Create your models here.
 class Workout(models.Model):
   # define fields
@@ -19,7 +20,7 @@ class Workout(models.Model):
       on_delete=models.CASCADE
   )
 
-#  client = models.ForeignKey('Client', related_name='workouts', on_delete=models.CASCADE, null=True)
+  client = models.ForeignKey('Client', related_name='workouts', on_delete=models.CASCADE, null=True)
 
   def __str__(self):
     # This must return a string

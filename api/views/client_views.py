@@ -82,7 +82,7 @@ class Client_Detail(generics.RetrieveUpdateDestroyAPIView):
         # Add owner to data object now that we know this user owns the resource
         request.data['client']['owner'] = request.user.id
         # Validate updates with serializer
-        data = ClientSerializer(client_manage, data=request.data['client'])
+        data = ClientSerializer(client, data=request.data['client'])
         if data.is_valid():
             # Save & send a 204 no content
             data.save()
