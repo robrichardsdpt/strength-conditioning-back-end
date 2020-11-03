@@ -22,12 +22,13 @@ class Workout(models.Model):
 
   def __str__(self):
     # This must return a string
-    return f"The workout on {self.rx_date} was made by {self.owner}."
+    return f"The workout on {self.rx_date} was made by {self.owner} and set up for {self.client}."
 
   def as_dict(self):
     """Returns dictionary version of Workout models"""
     return {
         'id': self.id,
+        'client': self.client,
         'rx_date': self.date,
         'notes': self.notes,
         'exercise': self.exercise,
