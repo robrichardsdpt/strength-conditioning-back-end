@@ -6,10 +6,10 @@ from rest_framework import status, generics
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user, authenticate, login, logout
 
-from ..serializers import ClientSerializer, ClientRegisterSerializer,  ChangePasswordSerializer
+from ..serializers import UserSerializer, UserRegisterSerializer,  ChangePasswordSerializer
 from ..models.client import Client
 
-class SignUp(generics.CreateAPIView):
+class ClientSignUp(generics.CreateAPIView):
     # Override the authentication/permissions classes so this endpoint
     # is not authenticated & we don't need any permissions to access it.
     authentication_classes = ()
@@ -35,7 +35,7 @@ class SignUp(generics.CreateAPIView):
         else:
             return Response(user.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class SignIn(generics.CreateAPIView):
+class ClientSignIn(generics.CreateAPIView):
     # Override the authentication/permissions classes so this endpoint
     # is not authenticated & we don't need any permissions to access it.
     authentication_classes = ()
