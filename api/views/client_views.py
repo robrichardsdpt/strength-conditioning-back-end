@@ -21,7 +21,7 @@ class Clients(generics.ListCreateAPIView):
         # Filter the workouts by owner, so you can only see your owned workouts
         clients = Client.objects.filter(owner=request.user.id)
         # Run the data through the serializer
-        data = ClientManageSerializer(clients, many=True).data
+        data = ClientSerializer(clients, many=True).data
         return Response({ 'clients': data })
 
     def post(self, request):

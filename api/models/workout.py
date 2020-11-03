@@ -14,17 +14,12 @@ class Workout(models.Model):
         MaxValueValidator(10)
         ])
   notes = models.CharField(max_length=200, blank=True)
-#  client = models.ForeignKey(
-#      'Client',
-#      related_name='workouts',
-#      on_delete=models.CASCADE,
-#      default= ''
-#  )
   owner = models.ForeignKey(
       get_user_model(),
       on_delete=models.CASCADE
   )
 
+#  client = models.ForeignKey('Client', related_name='workouts', on_delete=models.CASCADE, null=True)
 
   def __str__(self):
     # This must return a string
