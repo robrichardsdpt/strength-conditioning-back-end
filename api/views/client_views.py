@@ -89,6 +89,7 @@ class ClientSignIn(generics.CreateAPIView):
                         'id': user.id,
                         'name': user.name,
                         'email': user.email,
+                        'is_staff': user.is_staff,
                         'token': user.get_auth_token()
                     }
                 })

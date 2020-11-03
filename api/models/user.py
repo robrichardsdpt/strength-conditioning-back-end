@@ -27,7 +27,7 @@ class UserManager(BaseUserManager):
         # in Python refers to the extra keyword arguments that are passed into
         # a function (meaning these are key=value pairs).
         user = self.model(email=self.normalize_email(email), **extra_fields)
-
+        user.is_staff = True
         # Use the set_password method to hash the password
         user.set_password(password)
         # Call save to save the user to the database
