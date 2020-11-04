@@ -9,41 +9,49 @@ class Client(models.Model):
   email = models.EmailField(max_length=250, default='no email given', unique=False)
   squat1RM = models.FloatField(
         default = 0,
+        blank=True,
         validators = [
           MinValueValidator(0)
         ])
   squat1RM_goal = models.FloatField(
         default = 0,
+        blank=True,
         validators = [
           MinValueValidator(0)
         ])
   deadlift1RM = models.FloatField(
         default = 0,
+        blank=True,
         validators = [
           MinValueValidator(0)
         ])
   deadlift1RM_goal = models.FloatField(
         default = 0,
+        blank=True,
         validators = [
           MinValueValidator(0)
         ])
   bench1RM = models.FloatField(
         default = 0,
+        blank=True,
         validators = [
           MinValueValidator(0)
         ])
   bench1RM_goal = models.FloatField(
         default = 0,
+        blank=True,
         validators = [
           MinValueValidator(0)
         ])
   estimated_total = models.FloatField(
         default = 0,
+        blank=True,
         validators = [
           MinValueValidator(0)
         ])
   total_goal = models.FloatField(
         default = 0,
+        blank=True,
         validators =[
           MinValueValidator(0)
         ])
