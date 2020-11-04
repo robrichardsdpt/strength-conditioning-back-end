@@ -66,12 +66,12 @@ class Client(models.Model):
 
   def __str__(self):
     # This must return a string
-    return f"The client {self.name} works with {self.coach}"
+    return f"The client {self.name} at {self.email}"
 
   def as_dict(self):
     """Returns dictionary version of Workout models"""
     return {
         'id': self.id,
         'name': self.name,
-        'coach': self.coach,
+        'email': self.email,
     }
