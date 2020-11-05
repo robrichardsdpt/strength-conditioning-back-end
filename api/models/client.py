@@ -7,49 +7,49 @@ class Client(models.Model):
   # https://docs.djangoproject.com/en/3.0/ref/models/fields/
   name = models.CharField(max_length=250, default='no name given')
   email = models.EmailField(max_length=250, default='no email given', unique=False)
-  squat1RM = models.FloatField(
+  squat1RM = models.IntegerField(
         default = 0,
         blank=True,
         validators = [
           MinValueValidator(0)
         ])
-  squat1RM_goal = models.FloatField(
+  squat1RM_goal = models.IntegerField(
         default = 0,
         blank=True,
         validators = [
           MinValueValidator(0)
         ])
-  deadlift1RM = models.FloatField(
+  deadlift1RM = models.IntegerField(
         default = 0,
         blank=True,
         validators = [
           MinValueValidator(0)
         ])
-  deadlift1RM_goal = models.FloatField(
+  deadlift1RM_goal = models.IntegerField(
         default = 0,
         blank=True,
         validators = [
           MinValueValidator(0)
         ])
-  bench1RM = models.FloatField(
+  bench1RM = models.IntegerField(
         default = 0,
         blank=True,
         validators = [
           MinValueValidator(0)
         ])
-  bench1RM_goal = models.FloatField(
+  bench1RM_goal = models.IntegerField(
         default = 0,
         blank=True,
         validators = [
           MinValueValidator(0)
         ])
-  estimated_total = models.FloatField(
+  estimated_total = models.IntegerField(
         default = 0,
         blank=True,
         validators = [
           MinValueValidator(0)
         ])
-  total_goal = models.FloatField(
+  total_goal = models.IntegerField(
         default = 0,
         blank=True,
         validators =[
@@ -62,7 +62,7 @@ class Client(models.Model):
       default= ''
   )
 
-  coach = models.ForeignKey('User', related_name='clients', default='', on_delete=models.CASCADE)
+  coach = models.ForeignKey(get_user_model(), related_name='clients', default='', on_delete=models.CASCADE)
 
   def __str__(self):
     # This must return a string
