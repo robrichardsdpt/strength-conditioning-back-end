@@ -69,7 +69,7 @@ class Client(models.Model):
     return f"The client {self.name} at {self.email}"
 
   def as_dict(self):
-    """Returns dictionary version of Workout models"""
+    """Returns dictionary version of Client models"""
     return {
         'id': self.id,
         'name': self.name,

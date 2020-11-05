@@ -33,5 +33,6 @@ class Workout(models.Model):
         'rx_date': self.date,
         'notes': self.notes,
         'exercise': self.exercise,
-        'overall_rpe': self.overall_rpe
+        'overall_rpe': self.overall_rpe,
+        'client': self.client
     }
