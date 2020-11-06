@@ -57,5 +57,7 @@ class Exercise(models.Model):
         'rx_percentage': self.rx_percentage,
         'rx_rpe': self.rx_rpe,
         'weight': self.weight,
-        'notes': self.notes
+        'notes': self.notes,
+        'workout': self.workout,
+        'owner': self.owner
     }

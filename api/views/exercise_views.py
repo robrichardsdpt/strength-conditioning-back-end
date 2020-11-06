@@ -19,7 +19,7 @@ class Exercises(generics.ListCreateAPIView):
         # Get all the exercises:
         # exercises = Exercise.objects.all()
         # Filter the exercises by owner, so you can only see your owned exercises
-        exercises = Exercises.objects.filter(owner=request.user.id)
+        exercises = Exercise.objects.filter(owner=request.user.id)
         # Run the data through the serializer
         data = ExerciseSerializer(exercises, many=True).data
         return Response({ 'exercises': data })
