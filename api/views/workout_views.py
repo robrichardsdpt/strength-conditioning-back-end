@@ -74,7 +74,7 @@ class WorkoutDetail(generics.RetrieveUpdateDestroyAPIView):
 
         # Locate Workout
         # get_object_or_404 returns a object representation of our Workout
-        mango = get_object_or_404(Workout, pk=pk)
+        workout = get_object_or_404(Workout, pk=pk)
         # Check if user is the same as the request.user.id
         if not request.user.id == workout.owner.id:
             raise PermissionDenied('Unauthorized, you do not own this workout')
