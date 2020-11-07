@@ -60,7 +60,7 @@ class ExerciseDetail(generics.RetrieveUpdateDestroyAPIView):
         if not request.user.id == exercise.owner.id:
             raise PermissionDenied('Unauthorized, you do not own this exercise')
         # Only delete if the user owns the  mango
-        mango.delete()
+        exercise.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def partial_update(self, request, pk):
