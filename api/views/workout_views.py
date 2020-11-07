@@ -55,7 +55,7 @@ class WorkoutDetail(generics.RetrieveUpdateDestroyAPIView):
     def delete(self, request, pk):
         """Delete request"""
         # Locate workout to delete
-        mango = get_object_or_404(Workout, pk=pk)
+        workout = get_object_or_404(Workout, pk=pk)
         # Check the workout's owner agains the user making this request
         if not request.user.id == workout.owner.id:
             raise PermissionDenied('Unauthorized, you do not own this workout')
